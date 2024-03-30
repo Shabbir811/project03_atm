@@ -19,61 +19,79 @@ let user = await inquirer.prompt({
         }
     }
 });
-//pin code taken from user through prompt
-let pinCode = await inquirer.prompt({
-    name: "pin",
-    type: "number",
-    message: ` ${user.username} please enter your PIN        `,
-});
-if (mypincode === pinCode.pin) {
-    //print welcome message
-    console.log(`\n\nwelcome ${user.username}\n\n`);
-    let transation = await inquirer.prompt([{
-            name: "trans",
-            type: "list",
-            message: "please select a transaction",
-            choices: ["balance inquiry", "fast Cash", "Cash withdrawal", "cash deposit"]
-        }]);
-    if (transation.trans === "balance inquiry") {
-        console.log(`\n\t\t\t\t\t\t\tmr ${user.username} your current balance is ${mycurrentBalance}rs`);
-    }
-    else if (transation.trans === "fast Cash") {
-        let fast = await inquirer.prompt([{
-                name: "fastcash",
+let start = true;
+while (start) {
+    //pin code taken from user through prompt
+    let pinCode = await inquirer.prompt({
+        name: "pin",
+        type: "number",
+        message: ` ${user.username} please enter your PIN        `,
+    });
+    if (mypincode === pinCode.pin) {
+        //print welcome message
+        console.log(`\n\nwelcome ${user.username}\n\n`);
+        let transation = await inquirer.prompt([{
+                name: "trans",
                 type: "list",
-                message: "select the amount which you withdrawal",
-                choices: [1000, 2000, 5000, 10000],
+                message: "please select a transaction",
+                choices: ["balance inquiry", "fast Cash", "Cash withdrawal", "cash deposit", "change pin"]
             }]);
-        if (fast.fastcash === 1000 || 2000 || 5000 || 10000) {
-            console.log(`\n\n${user.username}, you have successfully withdrawal ${fast.fastcash}rs \n    your remaining balance is ${mycurrentBalance - fast.fastcash}rs \n\n`);
+        if (transation.trans === "balance inquiry") {
+            console.log(`\n\t\t\t\t\t\t\tmr ${user.username} your current balance is ${mycurrentBalance}rs`);
         }
-    }
-    else if (transation.trans === "Cash withdrawal") {
-        let withdrawal = await inquirer.prompt([
-            {
-                name: "cashwithdrawal",
+        else if (transation.trans === "change pin") {
+            let c_pin = await inquirer.prompt({
+                name: "newpin",
                 type: "number",
-                message: "enter amount in rupees",
+                message: "enter your new pin"
+            });
+            mypincode = c_pin.newpin;
+            console.log(`your pin code has been changed`);
+        }
+        else if (transation.trans === "fast Cash") {
+            let fast = await inquirer.prompt([{
+                    name: "fastcash",
+                    type: "list",
+                    message: "select the amount which you withdrawal",
+                    choices: [1000, 2000, 5000, 10000],
+                }]);
+            if (fast.fastcash === 1000 || 2000 || 5000 || 10000) {
+                console.log(`\n\n${user.username}, you have successfully withdrawal ${fast.fastcash}rs \n    your remaining balance is ${mycurrentBalance = mycurrentBalance - fast.fastcash}rs \n\n`);
             }
-        ]);
-        if (withdrawal.cashwithdrawal < mycurrentBalance) {
-            console.log(`\n\nyou have successfully withdrawal ${withdrawal.cashwithdrawal}rs \n\nnow your remaining balance is ${mycurrentBalance - withdrawal.cashwithdrawal}rs \n\n`);
         }
-        else {
-            console.log(`${user.username} your balance is insufficent  `);
+        else if (transation.trans === "Cash withdrawal") {
+            let withdrawal = await inquirer.prompt([
+                {
+                    name: "cashwithdrawal",
+                    type: "number",
+                    message: "enter amount in rupees",
+                }
+            ]);
+            if (withdrawal.cashwithdrawal < mycurrentBalance) {
+                console.log(`\n\nyou have successfully withdrawal ${withdrawal.cashwithdrawal}rs \n\nnow your remaining balance is ${mycurrentBalance = mycurrentBalance - withdrawal.cashwithdrawal}rs \n\n`);
+            }
+            else {
+                console.log(`${user.username} your balance is insufficent  `);
+            }
+        }
+        else if (transation.trans === "cash deposit") {
+            let deposit = await inquirer.prompt([{
+                    name: "cashdeposit",
+                    type: "number",
+                    message: "enter amount to deposit"
+                }]);
+            if (deposit.cashdeposit > 0) {
+                console.log(`\n\nyou have successfully deposit ${deposit.cashdeposit}rs \n\n now your current balance is ${mycurrentBalance = mycurrentBalance + deposit.cashdeposit}rs`);
+            }
         }
     }
-    else if (transation.trans === "cash deposit") {
-        let deposit = await inquirer.prompt([{
-                name: "cashdeposit",
-                type: "number",
-                message: "enter amount what you deposit"
-            }]);
-        if (deposit.cashdeposit > 0) {
-            console.log(`\n\nyou have successfully deposit ${deposit.cashdeposit}rs \n\n now you are current balance is ${mycurrentBalance + deposit.cashdeposit}rs`);
-        }
+    else {
+        console.log(`\n\n${user.username}, please enter vaild pin`);
     }
-}
-else {
-    console.log(`\n\n${user.username}, please enter vaild pin`);
+    let breaks = await inquirer.prompt({
+        name: "stop",
+        type: "confirm",
+        message: "do you want to restart the program"
+    });
+    start = breaks.stop;
 }
